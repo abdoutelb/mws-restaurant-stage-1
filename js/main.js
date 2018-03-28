@@ -177,6 +177,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 
+// Register Service Worker
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/js/sw.js');
 }

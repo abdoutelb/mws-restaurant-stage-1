@@ -1,6 +1,8 @@
 var dataCacheName = 'res-v1';
 var cacheName = 'res-mws';
-var filesToCache = [
+
+// items to be caches
+var cachedItems = [
     '/',
     '/index.html',
     'css/styles.css',
@@ -9,14 +11,16 @@ var filesToCache = [
     'restaurant.html',
 ];
 
+// when sw install
 self.addEventListener('install', function (e) {
     e.waitUntil(
         caches.open(cacheName).then(function (cache) {
-            return cache.addAll(filesToCache);
+            return cache.addAll(cachedItems);
         })
     );
 });
 
+// when sw activate
 self.addEventListener('activate', function (e) {
     e.waitUntil(
         caches.keys().then(function (keyList) {
@@ -30,6 +34,7 @@ self.addEventListener('activate', function (e) {
     return self.clients.claim();
 });
 
+// fetch the cache items
 self.addEventListener('fetch', function (e) {
     if (e.pathname === '/') {
         e.respondWith(
