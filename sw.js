@@ -1,15 +1,14 @@
-var dataCacheName = 'res-v1';
-var cacheName = 'res-mws';
+var dataCacheName = 'restaurant-v1';
+var cacheName = 'restaurant-app';
 
 // items to be caches
 var cachedItems = [
-    '/',
-    '/index.html',
+    'index.html',
+    'restaurant.html',
     'css/styles.css',
+    'js/main.js',
     'js/dbhelper.js',
     'js/restaurant_info.js',
-    'restaurant.html',
-    'main.js'
 ];
 
 // when sw install
