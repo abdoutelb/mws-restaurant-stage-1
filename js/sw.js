@@ -9,6 +9,7 @@ var cachedItems = [
     'js/dbhelper.js',
     'js/restaurant_info.js',
     'restaurant.html',
+    'main.js'
 ];
 
 // when sw install
