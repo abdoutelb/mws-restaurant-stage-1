@@ -12,5 +12,5 @@ You have been provided the code for a restaurant reviews website. The code has a
 
 ### How to start?
 
-I use this extention with [VSCODE](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) , so if you have this extention just hit Go live from your VSCode and it will run on port 5500
+I use this [http-server](https://github.com/indexzero/http-server)  along with [CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en) extention for chrome.
 
