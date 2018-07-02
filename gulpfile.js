@@ -3,6 +3,8 @@ var gulp = require('gulp'),
   watch = require('gulp-watch'),
   src = ['css/*.css', 'js/*.js' , './*.html'],
   webp = require('gulp-webp');
+  const minify = require('gulp-minify');
+  let cleanCSS = require('gulp-clean-css');
 
 
 gulp.task('webserver', function () {
@@ -12,6 +14,19 @@ gulp.task('webserver', function () {
     port:8000
   });
 });
+
+gulp.task('minify-css', () => {
+  return gulp.src('styles/*.css')
+    .pipe(cleanCSS({compatibility: 'ie8'}))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('compress', function() {
+  gulp.src(['js/*.js'])
+    .pipe(minify())
+    .pipe(gulp.dest('dist'))
+});
+
 
 gulp.task('livereload', function () {
   gulp.src(src)
@@ -25,4 +40,4 @@ gulp.task('watch', function () {
   gulp.watch('styles/*.css');
 });
 
-gulp.task('default', ['webserver', 'livereload', 'watch']);
+gulp.task('default', ['minify-css','compress','webserver', 'livereload', 'watch']);

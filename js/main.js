@@ -20,15 +20,15 @@ createIndexedDB = () => {
 	let db, restaurants;
 	const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 	if (!indexedDB) {
-		console.error('== Your browser dont support indexed databases ==');
+		console.error('Indexed databases not supported');
 	}
 	DBHelper.fetchRestaurants((err, result) => {
 		restaurants = result;
 	});
 	const dbOpenRequest = indexedDB.open('restaurant-db', 1);
 	dbOpenRequest.onerror = (error) => {
-		console.error('== Failed to open indexed database !');
-		console.error('== error message', error.target);
+		console.error('Failed to open indexed database !');
+		console.error('Error message', error.target);
 	};
 	dbOpenRequest.onsuccess = (event) => {
 		db = event.target.result;
