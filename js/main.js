@@ -1,6 +1,4 @@
-let restaurants,
-  neighborhoods,
-  cuisines
+let restaurants,neighborhoods,cuisines
 var map
 var markers = []
 
@@ -10,7 +8,50 @@ var markers = []
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
+  if (navigator.serviceWorker) {
+      navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('Service Worker works !!'));
+    }
+
+  createIndexedDB();
 });
+
+createIndexedDB = () => {
+	let db, restaurants;
+	const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+	if (!indexedDB) {
+		console.error('Indexed databases not supported');
+	}
+	DBHelper.fetchRestaurants((err, result) => {
+		restaurants = result;
+	});
+	const dbOpenRequest = indexedDB.open('restaurant-db', 1);
+	dbOpenRequest.onerror = (error) => {
+		console.error('Failed to open indexed database !');
+		console.error('Error message', error.target);
+	};
+	dbOpenRequest.onsuccess = (event) => {
+		db = event.target.result;
+	};
+	dbOpenRequest.onupgradeneeded = (event) => {
+		db = event.target.result;
+		const keys = Object.keys(restaurants[0]);
+		const objectStore = db.createObjectStore('restaurants', { keyPath: 'id' });
+		objectStore.createIndex('name', 'name', { unique: false });
+		objectStore.createIndex('address', 'address', { unique: false });
+		objectStore.transaction.oncomplete = (event) => {
+			const restaurantsObjectStore = db.transaction([ 'restaurants' ], 'readwrite').objectStore('restaurants');
+			addToIndexedDB(restaurantsObjectStore, restaurants);
+		};
+	};
+};
+
+addToIndexedDB = (store, restaurants) => {
+	restaurants.forEach((restaurant) => {
+		store.add(restaurant);
+	});
+};
+
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -135,12 +176,14 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 /**
  * Create restaurant HTML.
  */
+// for the home page
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   li.tabIndex = '0';
-
   const image = document.createElement('img');
-  image.className = 'restaurant-img';
+  image.className = 'restaurant-img lazy';
+  image.setAttribute('alt', `${restaurant.name} Restaurant`);
+	image.setAttribute('data-echo', DBHelper.imageUrlForRestaurant(restaurant));
   image.alt = restaurant.alt + " Restaurant";
   
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
@@ -160,6 +203,7 @@ createRestaurantHTML = (restaurant) => {
   li.append(address);
 
   const more = document.createElement('a');
+  more.setAttribute('aria-label', `${restaurant.name} Restaurant Details Page`);
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
@@ -182,9 +226,9 @@ addMarkersToMap = (restaurants = self.restaurants) => {
 }
 
 // Register Service Worker
-if (navigator.serviceWorker) {
-  window.addEventListener('load', function () {
-  navigator.serviceWorker.register('/sw.js')
-  .then(() => console.log('Service Worker works !!'));
-  });
-}
+// if (navigator.serviceWorker) {
+//   window.addEventListener('load', function () {
+//   navigator.serviceWorker.register('/sw.js')
+//   .then(() => console.log('Service Worker works !!'));
+//   });
+// }

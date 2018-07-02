@@ -14,3 +14,11 @@ You have been provided the code for a restaurant reviews website. The code has a
 
 I use this [http-server](https://github.com/indexzero/http-server)  along with [CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en) extention for chrome.
 
+
+## Project Overview: Stage 2
+
+### How to start?
+I am using gulp task runner.
+Hit ```npm install``` 
+then run ```gulp``` in your root 
+DON'T forget running api server
