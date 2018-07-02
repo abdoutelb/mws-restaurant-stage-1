@@ -9,8 +9,8 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    // return `http://localhost:${port}/restaurants`; 
-    return `https://limitless-harbor-91860.herokuapp.com/restaurants`; // test heroku app
+     return `http://localhost:${port}/restaurants`; 
+    // return `https://limitless-harbor-91860.herokuapp.com/restaurants`; // test heroku app
   }
 
   /**
@@ -166,7 +166,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/restaurants/img/${restaurant.photograph}.jpg`);
+    return (`/img/${restaurant.photograph}.jpg`);
   }
 
   /**
