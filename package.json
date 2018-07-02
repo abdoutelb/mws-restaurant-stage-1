@@ -1,0 +1,34 @@
+{
+  "name": "restaurants",
+  "version": "1.0.0",
+  "description": "offline progressive web app showing a list of restaurants",
+  "main": "index.html",
+  "dependencies": {
+    "echo-js": "^1.7.3",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.5.0",
+    "gulp-watch": "^5.0.0",
+    "gulp-webp": "^3.0.0",
+    "vanilla-lazyload": "^8.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdoutelb/restaurants.git"
+  },
+  "keywords": [
+    "pwa",
+    "offline",
+    "sw",
+    "js"
+  ],
+  "author": "Abdoutelb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdoutelb/restaurants/issues"
+  },
+  "homepage": "https://github.com/abdoutelb/restaurants#readme"
+}
