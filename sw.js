@@ -31,7 +31,7 @@ self.addEventListener('install', function (e) {
     }));
 });
 
-// when sw activate
+//when sw activate
 // self.addEventListener('activate', function (e) {
 //     e.waitUntil(caches.keys().then(function (keyList) {
 //         return Promise.all(keyList.map(function (key) {
