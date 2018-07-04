@@ -29,6 +29,29 @@ class DBHelper {
     )
     })
     .catch((err)=>{
+      var dbe;
+      const dbOpenRequest = indexedDB.open('restaurant-db', 1);
+	    dbOpenRequest.onerror = (error) => {
+	    	console.error('Failed to open indexed database offline!');
+	    	console.error('Error message', error.target);
+      };
+
+      dbOpenRequest.onsuccess = (event) => {
+        dbe = event.target.result;
+        var myIndex = dbe.transaction(['restaurants'], 'readonly').objectStore('restaurants').index('name');
+        let indexData = [];
+      myIndex.openCursor().onsuccess =(event) => {
+        var cursor = event.target.result;
+        if(cursor) {
+          indexData.push(cursor.value);
+          cursor.continue();
+        } else {
+          callback(null,indexData)   
+        }
+      };
+      
+      };
+      
       callback(`Failed beacause ${err}`,null)
     })
     

@@ -40,4 +40,5 @@ gulp.task('watch', function () {
   gulp.watch('styles/*.css');
 });
 
-gulp.task('default', ['minify-css','compress','webserver', 'livereload', 'watch']);
+//gulp.task('default', ['minify-css','compress','webserver', 'livereload', 'watch']);
+gulp.task('default', ['webserver', 'livereload', 'watch']);
