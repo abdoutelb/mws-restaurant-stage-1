@@ -6,10 +6,10 @@ console.log("inside.");
 // items to be caches
 var cachedItems = [
     '/',
-  '/js/dbhelper.js',
-  '/js/main.js',
-  '/js/restaurant_info.js',
-  '/css/styles.css',
+    '/dist/dbhelper-min.js',
+    '/dist/main-min.js',
+    '/dist/restaurant_info-min.js',
+    '/css/styles-min.css',
   '/img/1.jpg',
   '/img/2.jpg',
   '/img/3.jpg',
