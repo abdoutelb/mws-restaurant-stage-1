@@ -19,6 +19,9 @@ I use this [http-server](https://github.com/indexzero/http-server)  along with [
 
 ### How to start?
 I am using gulp task runner.
+
 Hit ```npm install``` 
+
 then run ```gulp``` in your root 
+
 DON'T forget running api server
