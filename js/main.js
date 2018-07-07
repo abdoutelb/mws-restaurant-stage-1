@@ -185,6 +185,7 @@ createRestaurantHTML = (restaurant) => {
   image.setAttribute('alt', `${restaurant.name} Restaurant`);
 	image.setAttribute('data-echo', DBHelper.imageUrlForRestaurant(restaurant));
   
+ //image.src =  '/img/res.png'; 
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   li.append(image);
 
