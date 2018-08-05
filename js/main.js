@@ -6,15 +6,32 @@ var markers = []
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  window.addEventListener('online', function(e) { 
+    var condition = navigator.onLine ? "online" : "offline";
+    if(condition == "online"){
+      if(localStorage.getItem("reviews") != null){
+       var reviews = localStorage.getItem("review");
+       if(reviews.length > 0){
+         reviews.forEach(rev =>{
+          DBHelper.addReview(rev);
+         })
+         localStorage.removeItem("review");
+       }
+      }
+    }
+  });
+
+
   fetchNeighborhoods();
   fetchCuisines();
   if (navigator.serviceWorker) {
       navigator.serviceWorker.register('/sw.js')
       .then(() => console.log('Service Worker works !!'));
     }
-
   createIndexedDB();
 });
+
+
 
 createIndexedDB = () => {
 	let db, restaurants;
@@ -24,33 +41,46 @@ createIndexedDB = () => {
 	}
 	DBHelper.fetchRestaurants((err, result) => {
 		restaurants = result;
-	});
-	const dbOpenRequest = indexedDB.open('restaurant-db', 1);
+  });
+  DBHelper.fetchReviews((err, result) => {
+    reviews = result;
+  })
+	const dbOpenRequest = indexedDB.open('restaurants-db', 1);
 	dbOpenRequest.onerror = (error) => {
 		console.error('Failed to open indexed database !');
 		console.error('Error message', error.target);
 	};
 	dbOpenRequest.onsuccess = (event) => {
-		db = event.target.result;
-	};
+    db = event.target.result;
+  };
+  
 	dbOpenRequest.onupgradeneeded = (event) => {
-		db = event.target.result;
-		const keys = Object.keys(restaurants[0]);
-		const objectStore = db.createObjectStore('restaurants', { keyPath: 'id' });
-		objectStore.createIndex('name', 'name', { unique: false });
-		objectStore.createIndex('address', 'address', { unique: false });
-		objectStore.transaction.oncomplete = (event) => {
-			const restaurantsObjectStore = db.transaction([ 'restaurants' ], 'readwrite').objectStore('restaurants');
+    db = event.target.result;
+    //for restaurents
+    debugger;
+    const objectStore = db.createObjectStore('res', { keyPath: 'id' });
+    objectStore.createIndex('id', 'id', { unique: false });
+    objectStore.transaction.addEventListener('complete',(event) => {
+			const restaurantsObjectStore = db.transaction([ 'res' ], 'readwrite').objectStore('res');
 			addToIndexedDB(restaurantsObjectStore, restaurants);
-		};
-	};
+    });
+    //for reviews
+    const reviewStore = db.createObjectStore('reviews', { keyPath: 'id' });
+    reviewStore.createIndex('id', 'id', { unique: false });
+    reviewStore.transaction.addEventListener('complete',(event) => {
+      const reviewsObjectStore = db.transaction([ 'reviews' ], 'readwrite').objectStore('reviews');
+      addToIndexedDB(reviewsObjectStore, reviews);
+    }); 
+  };
 };
 
-addToIndexedDB = (store, restaurants) => {
-	restaurants.forEach((restaurant) => {
-		store.add(restaurant);
+addToIndexedDB = (store, data) => {
+	data.forEach((elm) => {
+		store.add(elm);
 	});
 };
+
+
 
 
 /**
@@ -194,6 +224,29 @@ createRestaurantHTML = (restaurant) => {
   name.innerHTML = restaurant.name;
   li.append(name);
 
+  //favorite button
+let fav = document.createElement('button');
+fav.innerHTML = '♥';
+fav.classList.add('fav_btn');
+
+printFavElementClass(fav,restaurant.is_favorite);
+li.append(fav);
+
+fav.onclick= function (){
+  let isFav = false;
+  if(restaurant.is_favorite == "false" || restaurant.is_favorite == false){
+isFav = true;
+  }else{
+isfav = false
+  }
+  
+  DBHelper.updateFavouriteStatus(restaurant.id, isFav);
+  restaurant.is_favorite = isFav;
+  changeFavElementClass(fav,restaurant.is_favorite);
+  };
+
+  
+
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
@@ -210,6 +263,36 @@ createRestaurantHTML = (restaurant) => {
 
   return li
 }
+
+printFavElementClass = (el, fav) =>{
+  if (fav == "false") {
+    el.classList.remove('favorite_yes');
+    el.classList.add('favorite_no');
+    el.setAttribute('aria-label', 'mark as favorite');
+
+  } else {
+    console.log('toggle yes upd');
+    el.classList.remove('favorite_no');
+    el.classList.add('favorite_yes');
+    el.setAttribute('aria-label', 'remove as favorite');
+
+  }
+}
+changeFavElementClass = (el, fav) => {
+  if (! fav) {
+    el.classList.remove('favorite_yes');
+    el.classList.add('favorite_no');
+    el.setAttribute('aria-label', 'mark as favorite');
+
+  } else {
+    console.log('toggle yes upd');
+    el.classList.remove('favorite_no');
+    el.classList.add('favorite_yes');
+    el.setAttribute('aria-label', 'remove as favorite');
+
+  }
+}
+
 
 /**
  * Add markers for current restaurants to the map.

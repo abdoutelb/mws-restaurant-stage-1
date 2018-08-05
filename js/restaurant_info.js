@@ -1,6 +1,22 @@
 let restaurant;
 var map;
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  window.addEventListener('online', function(e) { 
+    var condition = navigator.onLine ? "online" : "offline";
+    if(condition == "online"){
+      if(localStorage.getItem("reviews") != null){
+       var reviews = JSON.parse(localStorage.getItem("reviews"));
+       if(reviews.length > 0){
+         reviews.forEach(rev =>{
+          DBHelper.addReview(rev);
+         })
+         localStorage.removeItem("review");
+       }
+      }
+    }
+  });
+});
 /**
  * Initialize Google map, called from HTML.
  */
@@ -69,7 +85,34 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  DBHelper.fetchReviewsByRestId(restaurant.id)
+  .then(reviews => fillReviewsHTML(reviews))
+  .catch(err =>{
+    debugger;
+    const dbOpenRequest = indexedDB.open('restaurants-db', 1);
+	    dbOpenRequest.onerror = (error) => {
+	    	console.error('Failed to open indexed database offline!');
+	    	console.error('Error message', error.target);
+      };
+      
+       dbOpenRequest.onsuccess = (event) => {
+        dbe = event.target.result;
+        var myIndex = dbe.transaction(['reviews'], 'readonly').objectStore('reviews').index('id');
+        let indexData = [];
+      myIndex.openCursor().onsuccess =(event) => {
+        var cursor = event.target.result;
+        if(cursor) {
+          if(cursor.value.restaurant_id ==restaurant.id)
+          indexData.push(cursor.value);
+          cursor.continue();
+        } else {
+          fillReviewsHTML(indexData)
+        }
+      };
+      };
+
+  })
+  
 }
 
 /**
@@ -124,7 +167,7 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = new Date(review.createdAt).toLocaleString();
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -163,3 +206,38 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+
+addReview = () => {
+  event.preventDefault();
+  
+  let restaurantId = getParameterByName('id');
+  let name = document.getElementById('review-author').value;
+  let comments = document.getElementById('review-comments').value;
+  let rating = document.querySelector('#rating_select option:checked').value;
+  //const review = [name, rating, comments, restaurantId];
+
+  
+  const currentReview = {
+      restaurant_id: restaurantId,
+      rating: rating,
+      name: name,
+      comments: comments,
+      createdAt: new Date()
+  }; 
+  var condition = navigator.onLine ? "online" : "offline";
+  if(condition == "offline"){
+    if(localStorage.getItem("reviews") == null)
+    localStorage.setItem("reviews",JSON.stringify([currentReview]));
+    else{
+      var reviewsData = JSON.parse(localStorage.getItem("reviews"));
+      reviewsData.push(currentReview);
+    localStorage.setItem("reviews", + JSON.stringify(reviewsData));
+  }
+  }else{
+  DBHelper.addReview(currentReview);
+  }
+  //addReviewHTML(frontEndReview);
+  document.getElementById('review-form').reset();
+}
+
