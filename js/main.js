@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var condition = navigator.onLine ? "online" : "offline";
     if(condition == "online"){
       if(localStorage.getItem("reviews") != null){
-       var reviews = localStorage.getItem("review");
+       var reviews = localStorage.getItem("reviews");
        if(reviews.length > 0){
          reviews.forEach(rev =>{
           DBHelper.addReview(rev);

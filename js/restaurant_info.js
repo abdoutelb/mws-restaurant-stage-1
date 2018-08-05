@@ -4,6 +4,7 @@ var map;
 document.addEventListener('DOMContentLoaded', (event) => {
   window.addEventListener('online', function(e) { 
     var condition = navigator.onLine ? "online" : "offline";
+    debugger;
     if(condition == "online"){
       if(localStorage.getItem("reviews") != null){
        var reviews = JSON.parse(localStorage.getItem("reviews"));
@@ -88,7 +89,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   DBHelper.fetchReviewsByRestId(restaurant.id)
   .then(reviews => fillReviewsHTML(reviews))
   .catch(err =>{
-    debugger;
+    
     const dbOpenRequest = indexedDB.open('restaurants-db', 1);
 	    dbOpenRequest.onerror = (error) => {
 	    	console.error('Failed to open indexed database offline!');
@@ -226,12 +227,14 @@ addReview = () => {
       createdAt: new Date()
   }; 
   var condition = navigator.onLine ? "online" : "offline";
+  debugger;
   if(condition == "offline"){
     if(localStorage.getItem("reviews") == null)
     localStorage.setItem("reviews",JSON.stringify([currentReview]));
     else{
       var reviewsData = JSON.parse(localStorage.getItem("reviews"));
       reviewsData.push(currentReview);
+    //localStorage.removeItem("reviews");
     localStorage.setItem("reviews", + JSON.stringify(reviewsData));
   }
   }else{
