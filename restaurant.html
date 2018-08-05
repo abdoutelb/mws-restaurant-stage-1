@@ -41,13 +41,57 @@
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
-      <h2 tabindex="0" id="restaurant-name"></h2>
+      <p tabindex="0" id="restaurant-name"></p>
       <img tabindex="0" id="restaurant-img">
       <p tabindex="0" id="restaurant-cuisine"></p>
       <p tabindex="0" id="restaurant-address"></p>
       <table tabindex="0" id="restaurant-hours"></table>
     </section>
     <!-- end restaurant -->
+    <!-- Begin with Reviews Form-->
+    <section id="form-container">
+        <h3 class="form-name">Add Review</h3>
+        <form class="form_style" id="review-form">
+            <div class="row">
+                <div class="col-25">
+                    <label for="review-author">Author:</label>
+                  </div>
+                  <div class="col-75">
+                      <input id="review-author" name="name" type="text">
+                  </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                  <label for="rating_select">Rating:</label>
+                </div>
+                <div class="col-75">
+                    <select aria-label="Rating select" id="rating_select" name="Rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="col-25">
+                    <label for="review-comments">Comments:</label>
+                  </div>
+                  <div class="col-75">
+                      <textarea id="review-comments" name="comments"></textarea>
+                  </div>
+                </div>
+           <div class="row">
+          <div id="form-error"></div>
+        </div>
+        <br/>
+          <div class="row">
+          <button class="btn-submit" onclick="addReview()">Add Review</button>
+        </div>
+        </form>
+      </section>
+    <!-- end with Review Form-->
     <!-- Beginning reviews -->
     <section id="reviews-container">
       <ul tabindex="0" id="reviews-list"></ul>
@@ -70,13 +114,13 @@
   <script type="text/javascript" src="js/dbhelper.js"></script>
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
-  <script src="node_modules/echo-js/dist/echo.min.js"></script>
+  <!-- <script src="node_modules/echo-js/dist/echo.min.js"></script> -->
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCzUMj6bqOPn9oFNWqaDLDliZ_Er5HKWE&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
-  <script>
+  <!-- <script>
     echo.init();
-  </script>
+  </script> -->
 </body>
 
 </html>

@@ -7,11 +7,15 @@ class DBHelper {
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
+  static get DATABASE_ROOT_URL(){
+    return `http://localhost:1337/`;
+  }
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
      return `http://localhost:${port}/restaurants`; 
     // return `https://limitless-harbor-91860.herokuapp.com/restaurants`; // test heroku app
   }
+
 
   /**
    * Fetch all restaurants.
@@ -29,16 +33,17 @@ class DBHelper {
     )
     })
     .catch((err)=>{
+      console.log('%c When restaurant error in fetch ', 'background: #222; color: #bada55');
       var dbe;
-      const dbOpenRequest = indexedDB.open('restaurant-db', 1);
+      const dbOpenRequest = indexedDB.open('restaurants-db', 1);
 	    dbOpenRequest.onerror = (error) => {
 	    	console.error('Failed to open indexed database offline!');
 	    	console.error('Error message', error.target);
       };
-
-      dbOpenRequest.onsuccess = (event) => {
+      
+       dbOpenRequest.onsuccess = (event) => {
         dbe = event.target.result;
-        var myIndex = dbe.transaction(['restaurants'], 'readonly').objectStore('restaurants').index('name');
+        var myIndex = dbe.transaction(['res'], 'readonly').objectStore('res').index('id');
         let indexData = [];
       myIndex.openCursor().onsuccess =(event) => {
         var cursor = event.target.result;
@@ -207,5 +212,139 @@ class DBHelper {
     );
     return marker;
   }
+
+  //for update favorite
+  static updateFavouriteStatus (id,fav) {
+    
+    fetch(`${DBHelper.DATABASE_URL}/${id}?is_favorite=${fav}`,{
+      method : 'PUT'
+    }).then(res =>{
+      var dbe;
+      const dbOpenRequest = indexedDB.open('restaurants-db', 1);
+	    dbOpenRequest.onerror = (error) => {
+	    	console.error('Failed to open indexed database offline!');
+	    	console.error('Error message', error.target);
+      };
+
+      dbOpenRequest.onsuccess = (event) => {
+        dbe = event.target.result;
+        
+        var myIndex = dbe.transaction(['res'], 'readwrite').objectStore('res').index('id');
+        let indexData = [];
+      myIndex.openCursor().onsuccess =(event) => {
+        var cursor = event.target.result;
+        if(cursor && cursor.value.id ==id ) {
+          cursor.value.is_favorite = fav;
+          indexData.push(cursor.value);
+        } else {
+          cursor.continue();
+        }
+      };
+      
+      };
+
+    })
+    }
+    static fetchReviews(callback){
+      
+      fetch(`${DBHelper.DATABASE_ROOT_URL}reviews/`).then((response) => {
+        return response.json()
+      }).then(reviews => {
+        callback(null, reviews);
+      }).catch(error => {
+        console.log('%c When reviews error in fetch ', 'background: #222; color: #bada55');
+      var dbe;
+      const dbOpenRequest = indexedDB.open('restaurants-db', 1);
+	    dbOpenRequest.onerror = (error) => {
+	    	console.error('Failed to open indexed database offline!');
+	    	console.error('Error message', error.target);
+      };
+      
+       dbOpenRequest.onsuccess = (event) => {
+        dbe = event.target.result;
+        var myIndex = dbe.transaction(['reviews'], 'readonly').objectStore('reviews').index('id');
+        let indexData = [];
+      myIndex.openCursor().onsuccess =(event) => {
+        var cursor = event.target.result;
+        if(cursor) {
+          indexData.push(cursor.value);
+          cursor.continue();
+        } else {
+          callback(null,indexData)   
+        }
+      };
+      };
+      callback(`Failed beacause ${err}`,null)
+      })
+    }
+
+
+    static fetchReviewsByRestId(id) {
+      return fetch(`${DBHelper.DATABASE_ROOT_URL}reviews/?restaurant_id=${id}`)
+        .then(response => response.json())
+        .then(reviews => {
+          return Promise.resolve(reviews);
+        })
+        .catch(error => {
+          return DBHelper.getStoredObjectById('reviews', 'restaurant', id)
+            .then((storedReviews) => {
+              console.log('looking for offline stored reviews');
+              return Promise.resolve(storedReviews);
+            })
+        });
+    }
+
+
+
+    static addReview(review) {
+      
+      let reviewSend = {
+        "name": review.name,
+        "rating": parseInt(review.rating),
+        "comments": review.comments,
+        "restaurant_id": parseInt(review.restaurant_id)
+      };
+      
+      var options = {
+        method: 'POST',
+        body: JSON.stringify(reviewSend),
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      };
+      fetch(`http://localhost:1337/reviews`, options).then((response) => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+          return response.json();
+        } else { return 'API call successfull'}})
+      .then((data) => {
+        
+      var dbe;
+      const dbOpenRequest = indexedDB.open('restaurants-db', 1);
+	    dbOpenRequest.onerror = (error) => {
+	    	console.error('Failed to open indexed database offline!');
+	    	console.error('Error message', error.target);
+      };
+      
+       dbOpenRequest.onsuccess = (event) => {
+        dbe = event.target.result;
+        var ObjectmyIndex = dbe.transaction(['reviews'], 'readwrite').objectStore('reviews');
+        var myIndex = ObjectmyIndex.index('id');
+        let indexData = [];
+      myIndex.openCursor(null, 'prev').onsuccess =(event) => {
+        var cursor = event.target.result;
+        debugger;
+        if(cursor) {
+          reviewSend.id = cursor.value.id + 1;
+        } 
+        ObjectmyIndex.add(reviewSend)
+      };
+      };      
+
+    })
+      .catch(error => console.log('error:', error));
+    }
+    
+
 
 }

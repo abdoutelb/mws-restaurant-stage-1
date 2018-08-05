@@ -20,6 +20,7 @@ var cachedItems = [
   '/img/8.jpg',
   '/img/9.jpg',
   '/img/10.jpg',
+  '/img/res.png',
   'index.html',
   'restaurant.html',
 ];
@@ -90,4 +91,13 @@ self.addEventListener('fetch', function (event) {
 //     }
 
     
+// });
+// self.addEventListener('sync', function(event) {
+//   console.log('Sync', event);
+//   if (event.tag == 'backgroundSync') {
+//     event.waitUntil((event) => {
+//       console.log('background event :', event);
+//       self.sendReview();
+//     });
+//   }
 // });

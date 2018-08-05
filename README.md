@@ -24,4 +24,14 @@ Hit ```npm install```
 
 then run ```gulp``` in your root 
 
+## Project Overview: Stage 3
+
+### How to start?
+I am using gulp task runner.
+
+Hit ```npm install``` 
+
+then run ```gulp``` in your root 
+
+
 DON'T forget running api server
