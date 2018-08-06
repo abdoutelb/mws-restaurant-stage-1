@@ -5,11 +5,11 @@ console.log("inside.");
 
 // items to be caches
 var cachedItems = [
-    '/',
-    '/js/dbhelper.js',
-    '/js/main.js',
-    '/js/restaurant_info.js',
-    '/css/styles.css',
+  '/',
+  '/js/dbhelper.js',
+  '/js/main.js',
+  '/js/restaurant_info.js',
+  '/css/styles.css',
   '/img/1.jpg',
   '/img/2.jpg',
   '/img/3.jpg',
@@ -48,62 +48,10 @@ self.addEventListener('install', function (e) {
 
 // fetch the cache items
 self.addEventListener('fetch', function (event) {
-  //     const url = new URL(e.request.url);
-
-//     if (url.pathname.startsWith('/restaurant.html')) {
-//         e.respondWith(caches.match('restaurant.html').then(response => response || fetch(e.request)));
-//         return;
-//     }
-    if (event.request.url.includes('restaurant.html?id=')) {
-      const strippedurl = event.request.url.split('?')[0];
-      console.log('== event ==', event);
-      event.respondWith(
-        caches.match(strippedurl)
-          .then(function (response) {
-          return response || fetch(event.response);
-        })
-      );
-      console.log('== caches ==', caches);
-      return;
-    }
     event.respondWith(
-      caches.match(event.request)
+      caches.match(event.request,{ignoreSearch : true})
         .then(function (response) {
         return response || fetch(event.request);
       })
     );
   });
-
-// self.addEventListener('fetch', function (e) {
-
-//     const url = new URL(e.request.url);
-
-//     if (url.pathname.startsWith('/restaurant.html')) {
-//         e.respondWith(caches.match('restaurant.html').then(response => response || fetch(e.request)));
-//         return;
-//     }
-
-//     if (e.pathname === '/') {
-//         e.respondWith(caches.open(dataCacheName).then(function (cache) {
-//             return fetch(e.request).then(function (response) {
-//                 cache.put(e.request.url, response.clone());
-//                 return response;
-//             });
-//         }));
-//     } else {
-//         e.respondWith(caches.match(e.request).then(function (response) {
-//             return response || fetch(e.request);
-//         }));
-//     }
-
-    
-// });
-// self.addEventListener('sync', function(event) {
-//   console.log('Sync', event);
-//   if (event.tag == 'backgroundSync') {
-//     event.waitUntil((event) => {
-//       console.log('background event :', event);
-//       self.sendReview();
-//     });
-//   }
-// });
