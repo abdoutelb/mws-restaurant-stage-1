@@ -25,13 +25,9 @@ class DBHelper {
     if(id)
     dataUrl = dataUrl + "/" + id;
     
-    fetch(dataUrl,{method : "GET"})
-    .then((response) =>{
-      response.json().then((restaurants)=>
-      
-      callback(null,restaurants)
-    )
-    })
+    fetch(dataUrl)
+  .then(r => r.json())
+  .then(restaurants => callback(null, restaurants))
     .catch((err)=>{
       console.log('%c When restaurant error in fetch ', 'background: #222; color: #bada55');
       var dbe;
@@ -333,7 +329,7 @@ class DBHelper {
         let indexData = [];
       myIndex.openCursor(null, 'prev').onsuccess =(event) => {
         var cursor = event.target.result;
-        debugger;
+        
         if(cursor) {
           reviewSend.id = cursor.value.id + 1;
         } 

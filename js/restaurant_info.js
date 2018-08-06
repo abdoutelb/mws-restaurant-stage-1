@@ -4,7 +4,6 @@ var map;
 document.addEventListener('DOMContentLoaded', (event) => {
   window.addEventListener('online', function(e) { 
     var condition = navigator.onLine ? "online" : "offline";
-    debugger;
     if(condition == "online"){
       if(localStorage.getItem("reviews") != null){
        var reviews = JSON.parse(localStorage.getItem("reviews"));
@@ -227,7 +226,6 @@ addReview = () => {
       createdAt: new Date()
   }; 
   var condition = navigator.onLine ? "online" : "offline";
-  debugger;
   if(condition == "offline"){
     if(localStorage.getItem("reviews") == null)
     localStorage.setItem("reviews",JSON.stringify([currentReview]));

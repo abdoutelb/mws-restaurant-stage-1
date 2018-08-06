@@ -57,7 +57,6 @@ createIndexedDB = () => {
 	dbOpenRequest.onupgradeneeded = (event) => {
     db = event.target.result;
     //for restaurents
-    debugger;
     const objectStore = db.createObjectStore('res', { keyPath: 'id' });
     objectStore.createIndex('id', 'id', { unique: false });
     objectStore.transaction.addEventListener('complete',(event) => {

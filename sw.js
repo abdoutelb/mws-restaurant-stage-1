@@ -1,5 +1,5 @@
-var dataCacheName = 'restaurant-v1';
-var cacheName = 'restaurant-app-1';
+var dataCacheName = 'restaurant-v2';
+var cacheName = 'restaurant-app-2';
 
 console.log("inside.");
 
@@ -22,7 +22,7 @@ var cachedItems = [
   '/img/10.jpg',
   '/img/res.png',
   'index.html',
-  'restaurant.html',
+  'restaurant.html'
 ];
 
 // when sw install
@@ -48,6 +48,12 @@ self.addEventListener('install', function (e) {
 
 // fetch the cache items
 self.addEventListener('fetch', function (event) {
+  //     const url = new URL(e.request.url);
+
+//     if (url.pathname.startsWith('/restaurant.html')) {
+//         e.respondWith(caches.match('restaurant.html').then(response => response || fetch(e.request)));
+//         return;
+//     }
     if (event.request.url.includes('restaurant.html?id=')) {
       const strippedurl = event.request.url.split('?')[0];
       console.log('== event ==', event);
