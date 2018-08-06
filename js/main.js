@@ -9,18 +9,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   window.addEventListener('online', function(e) { 
     var condition = navigator.onLine ? "online" : "offline";
     if(condition == "online"){
-      if(localStorage.getItem("reviews") != null){
-       var reviews = localStorage.getItem("reviews");
-       if(reviews.length > 0){
-         reviews.forEach(rev =>{
-          DBHelper.addReview(rev);
-         })
-         localStorage.removeItem("review");
-       }
-      }
+     DBHelper.sendOfflineReviews();
+     DBHelper.sendOfflineFavourites();
     }
   });
-
 
   fetchNeighborhoods();
   fetchCuisines();

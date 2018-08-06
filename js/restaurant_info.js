@@ -2,18 +2,16 @@ let restaurant;
 var map;
 
 document.addEventListener('DOMContentLoaded', (event) => {
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('Service Worker works !!'));
+  }
+  
   window.addEventListener('online', function(e) { 
     var condition = navigator.onLine ? "online" : "offline";
     if(condition == "online"){
-      if(localStorage.getItem("reviews") != null){
-       var reviews = JSON.parse(localStorage.getItem("reviews"));
-       if(reviews.length > 0){
-         reviews.forEach(rev =>{
-          DBHelper.addReview(rev);
-         })
-         localStorage.removeItem("review");
-       }
-      }
+      DBHelper.sendOfflineReviews();
+      DBHelper.sendOfflineFavourites();
     }
   });
 });
@@ -238,7 +236,8 @@ addReview = () => {
   }else{
   DBHelper.addReview(currentReview);
   }
-  //addReviewHTML(frontEndReview);
+  const ul = document.getElementById('reviews-list');
+  ul.prepend(createReviewHTML(currentReview));
   document.getElementById('review-form').reset();
 }
 
