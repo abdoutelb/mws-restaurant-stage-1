@@ -25,13 +25,9 @@ class DBHelper {
     if(id)
     dataUrl = dataUrl + "/" + id;
     
-    fetch(dataUrl,{method : "GET"})
-    .then((response) =>{
-      response.json().then((restaurants)=>
-      
-      callback(null,restaurants)
-    )
-    })
+    fetch(dataUrl)
+  .then(r => r.json())
+  .then(restaurants => callback(null, restaurants))
     .catch((err)=>{
       console.log('%c When restaurant error in fetch ', 'background: #222; color: #bada55');
       var dbe;
@@ -215,35 +211,49 @@ class DBHelper {
 
   //for update favorite
   static updateFavouriteStatus (id,fav) {
-    
-    fetch(`${DBHelper.DATABASE_URL}/${id}?is_favorite=${fav}`,{
-      method : 'PUT'
-    }).then(res =>{
-      var dbe;
-      const dbOpenRequest = indexedDB.open('restaurants-db', 1);
-	    dbOpenRequest.onerror = (error) => {
-	    	console.error('Failed to open indexed database offline!');
-	    	console.error('Error message', error.target);
-      };
-
-      dbOpenRequest.onsuccess = (event) => {
-        dbe = event.target.result;
+    //try offline
+    var condition = navigator.onLine ? "online" : "offline";
+    if(condition == "offline"){
+      var favData = { id ,fav};
+      if(localStorage.getItem("favs") == null)
+      localStorage.setItem("favs",JSON.stringify([favData]));
+      else{
+        var favsData = JSON.parse(localStorage.getItem("favs"));
+        favsData.push(favData);
+      localStorage.setItem("favs", + JSON.stringify(favsData));
+    }
+    }else{
+      fetch(`${DBHelper.DATABASE_URL}/${id}?is_favorite=${fav}`,{
+        method : 'PUT'
+      }).then(res =>{
+        var dbe;
+        const dbOpenRequest = indexedDB.open('restaurants-db', 1);
+        dbOpenRequest.onerror = (error) => {
+          console.error('Failed to open indexed database offline!');
+          console.error('Error message', error.target);
+        };
+  
+        dbOpenRequest.onsuccess = (event) => {
+          dbe = event.target.result;
+          
+          var myIndex = dbe.transaction(['res'], 'readwrite').objectStore('res').index('id');
+          let indexData = [];
+        myIndex.openCursor().onsuccess =(event) => {
+          var cursor = event.target.result;
+          if(cursor && cursor.value.id ==id ) {
+            cursor.value.is_favorite = fav;
+            indexData.push(cursor.value);
+          } else {
+            cursor.continue();
+          }
+        };
         
-        var myIndex = dbe.transaction(['res'], 'readwrite').objectStore('res').index('id');
-        let indexData = [];
-      myIndex.openCursor().onsuccess =(event) => {
-        var cursor = event.target.result;
-        if(cursor && cursor.value.id ==id ) {
-          cursor.value.is_favorite = fav;
-          indexData.push(cursor.value);
-        } else {
-          cursor.continue();
-        }
-      };
-      
-      };
+        };
+  
+      })
 
-    })
+    }
+    //end of offline
     }
     static fetchReviews(callback){
       
@@ -333,7 +343,7 @@ class DBHelper {
         let indexData = [];
       myIndex.openCursor(null, 'prev').onsuccess =(event) => {
         var cursor = event.target.result;
-        debugger;
+        
         if(cursor) {
           reviewSend.id = cursor.value.id + 1;
         } 
@@ -344,6 +354,31 @@ class DBHelper {
     })
       .catch(error => console.log('error:', error));
     }
+
+    static sendOfflineReviews() {
+      if(localStorage.getItem("reviews") != null){
+        var reviews = JSON.parse(localStorage.getItem("reviews"));
+        if(reviews.length > 0){
+          reviews.forEach(rev =>{
+           DBHelper.addReview(rev);
+          })
+          localStorage.removeItem("review");
+        }
+       }
+    }
+  
+    static sendOfflineFavourites() {
+      if(localStorage.getItem("favs") != null){
+        var favs = JSON.parse(localStorage.getItem("favs"));
+        if(favs.length > 0){
+          favs.forEach(fav =>{
+           DBHelper.updateFavouriteStatus(fav.id,fav.fav)
+          })
+          localStorage.removeItem("favs");
+        }
+       }
+    }
+
     
 
 
