@@ -231,7 +231,7 @@ addReview = () => {
       var reviewsData = JSON.parse(localStorage.getItem("reviews"));
       reviewsData.push(currentReview);
     //localStorage.removeItem("reviews");
-    localStorage.setItem("reviews", + JSON.stringify(reviewsData));
+    localStorage.setItem("reviews", JSON.stringify(reviewsData));
   }
   }else{
   DBHelper.addReview(currentReview);

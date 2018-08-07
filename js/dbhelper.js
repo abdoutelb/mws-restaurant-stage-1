@@ -362,7 +362,7 @@ class DBHelper {
           reviews.forEach(rev =>{
            DBHelper.addReview(rev);
           })
-          localStorage.removeItem("review");
+          localStorage.removeItem("reviews");
         }
        }
     }
