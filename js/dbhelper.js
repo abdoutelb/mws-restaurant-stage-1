@@ -8,12 +8,12 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_ROOT_URL(){
-    return `https://limitless-harbor-91860.herokuapp.com/`;
+    return `http://localhost:1337/`;
   }
   static get DATABASE_URL() {
-    // const port = 1337 // Change this to your server port
-    //  return `http://localhost:${port}/restaurants`; 
-     return `https://limitless-harbor-91860.herokuapp.com/restaurants`; // test heroku app
+    const port = 1337 // Change this to your server port
+     return `http://localhost:${port}/restaurants`; 
+    // return `https://limitless-harbor-91860.herokuapp.com/restaurants`; // test heroku app
   }
 
 
@@ -191,8 +191,8 @@ class DBHelper {
    */
   static imageUrlForRestaurant(restaurant) {
     if(restaurant.photograph == undefined)
-    return (`/restaurants/img/res.png`);
-    return (`/restaurants/img/${restaurant.photograph}.jpg`);
+    return (`/img/res.png`);
+    return (`/img/${restaurant.photograph}.jpg`);
   }
 
   /**
