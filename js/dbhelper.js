@@ -191,8 +191,8 @@ class DBHelper {
    */
   static imageUrlForRestaurant(restaurant) {
     if(restaurant.photograph == undefined)
-    return (`/img/res.png`);
-    return (`/img/${restaurant.photograph}.jpg`);
+    return (`/restaurants/img/res.png`);
+    return (`/restaurants/img/${restaurant.photograph}.jpg`);
   }
 
   /**
