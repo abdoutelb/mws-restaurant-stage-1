@@ -2,6 +2,7 @@
   "name": "restaurants",
   "version": "1.0.0",
   "description": "offline progressive web app showing a list of restaurants",
+  "homepage" : "https://abdoutelb.github.io/restaurants/"
   "main": "index.html",
   "dependencies": {
     "echo-js": "^1.7.3",
