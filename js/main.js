@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
   if (navigator.serviceWorker) {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('/restaurants/sw.js')
       .then(() => console.log('Service Worker works !!'));
     }
   createIndexedDB();
